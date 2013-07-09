@@ -5,6 +5,7 @@
 
 (in-package "COMMON-LISP-USER")
 
-(defpackage "cl-jwe" 
-  (:nicknames "jwe"))
+(defpackage "CL-JWE" 
+  (:nicknames "JWE")
+  (:use :cl))
   
