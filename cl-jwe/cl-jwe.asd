@@ -18,6 +18,9 @@
     :description "Java windowing environment"
     :long-description "A Lisp connection to the Java windowing toolkits"
     :components ((:file "package")
+		 (:file "logging"
+			:depends-on ("package"))
 		 (:file "net-client"
-			:depends-on ("package")))
+			:depends-on ("package"
+				     "logging")))
     :depends-on ("usocket"))
