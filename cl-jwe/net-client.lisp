@@ -36,3 +36,11 @@
     (loop-and-listen sock)
     (read-string sock)
     sock))
+
+(defun send-command ( comm-string sock )
+  (read-string sock)
+  (format (usocket:socket-stream sock) "~a~a" comm-string #\Etx)
+  (force-output (usocket:socket-stream sock))
+  (loop for i from 0 to 65555 doing (* i PI))
+  (loop-and-listen sock)
+  (read-string sock))

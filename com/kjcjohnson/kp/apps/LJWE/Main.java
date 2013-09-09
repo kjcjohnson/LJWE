@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package keith.apps.LJWE;
+package com.kjcjohnson.kp.apps.LJWE;
 
 import java.io.*;
 import java.net.*;
@@ -11,15 +11,23 @@ import java.net.*;
  *
  * @author Keith
  */
+
 public class Main {
-    
+	
+	public boolean quit = false;
     
     /**
      * 
      * @param args 
      */
     public static void main( String args[] ) {
-        
+    
+    	new Main();
+    	
+    } 
+    
+    public Main() {
+    	
         String hostname = "localhost";
         int port = 7282;
         ServerSocket server;
@@ -31,7 +39,7 @@ public class Main {
             return;
         }
             
-        while (true) {
+        while (!quit) {
             
             Socket nextSocket;
             
@@ -45,7 +53,11 @@ public class Main {
             
             
         }
-        
+        try {
+        	server.close();
+        } catch (IOException ioe) {
+        	System.err.println("Failed closing server");
+        }
     }
     
 }

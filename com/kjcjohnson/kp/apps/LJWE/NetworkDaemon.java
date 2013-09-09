@@ -2,12 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package keith.apps.LJWE;
+package com.kjcjohnson.kp.apps.LJWE;
 
 import com.kjcjohnson.kp.tools.cc.CC;
 
 import java.io.*;
 import java.net.*;
+import java.util.StringTokenizer;
 
 /**
  * This class is spawned by the Main server for each lisp application. It deals 
@@ -55,6 +56,8 @@ public class NetworkDaemon extends Thread {
         InputStream input;
         OutputStream output;
         
+        System.out.println( "Connected!" );
+        
         try {
             
             input = netsock.getInputStream();
@@ -86,6 +89,74 @@ public class NetworkDaemon extends Thread {
             System.err.println( "Incorrect handshake response.\n\nProceding recklessly.");
         }
         
+        boolean run = true;
+        WindowingEnvironment we = new WindowingEnvironment();
+        
+        while( run ) {
+        	String response = "repo";
+        	try {
+        		StringBuilder sb = new StringBuilder();
+        		char inp;
+        		while ((inp = Character.toChars( input.read() )[0]) != CC.ETX) {
+        			sb.append(inp);        			
+        		}
+        		
+        		System.out.println( sb.toString() ); 
+        		StringTokenizer token = new StringTokenizer( sb.toString(), " " );
+        		
+        		try {
+        		
+        			switch (token.nextToken()) {
+        		
+        				case "int_create":
+        					response = we.createInteger( Integer.parseInt(token.nextToken()) );
+        					break;
+        				case "int_read":
+        					response = we.readInteger(token.nextToken()).toString();
+        					break;
+        				case "int_update":
+        					response = we.updateInteger(token.nextToken(), Integer.parseInt(token.nextToken())).toString();
+        					break;
+        				case "int_destroy":
+        					response = we.destroyInteger(token.nextToken()).toString();
+        					break;
+        					
+        				case "class_create":
+        					response = we.createClass(token.nextToken());
+        					break;
+        				case "class_read":
+        					response = we.readClass(token.nextToken()).toString();
+        					break;
+        				case "class_update":
+        					response = we.updateClass(token.nextToken(), token.nextToken()).toString();
+        					break;
+        				case "class_destroy":
+        					response = we.destroyClass(token.nextToken()).toString();
+        					break;
+        			}
+        			
+        		} catch (Exception e) {
+        			
+        			System.out.println( "Null exception" );
+        			response = "NULL";
+        			
+        		}
+        		
+        	} catch (Exception ioe) {
+        		ioe.printStackTrace();
+        	} finally {
+        		try {
+        			output.write(response.getBytes());
+        			output.flush();
+        			System.out.println( response );
+        		} catch (IOException ioe) {
+        			
+        		}
+        	}
+        	
+        	
+        }
+        
     }
     
 }
@@ -96,7 +167,12 @@ public class NetworkDaemon extends Thread {
  */
 class IncorrectResponseException extends Exception {
 
-    IncorrectResponseException( String desp ) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 3514300107271330929L;
+
+	IncorrectResponseException( String desp ) {
         super( desp );
     }
 
